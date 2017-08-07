@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatDelegate;
 
 public class MainActivity extends AppCompatActivity {
 
+    // Sets DayNight theme to always Night Mode
     static {
         AppCompatDelegate.setDefaultNightMode(
                 AppCompatDelegate.MODE_NIGHT_YES);
