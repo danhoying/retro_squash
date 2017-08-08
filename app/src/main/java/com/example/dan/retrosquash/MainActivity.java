@@ -1,12 +1,17 @@
 package com.example.dan.retrosquash;
 
+import android.content.res.AssetFileDescriptor;
+import android.content.res.AssetManager;
 import android.graphics.Canvas;
 import android.graphics.Point;
+import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
 import android.view.Display;
+
+import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -57,7 +62,30 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        squashCourtView = new SquashCourtView(this);
+        setContentView(squashCourtView);
 
+        // Sounds
+        soundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
+        try {
+            // Create objects for 2 required classes
+            AssetManager assetManager = getAssets();
+            AssetFileDescriptor descriptor;
+
+            //Create FX in memory ready to use
+            descriptor = assetManager.openFd("sample1.ogg");
+            sample1 = soundPool.load(descriptor, 0);
+
+            descriptor = assetManager.openFd("sample2.ogg");
+            sample2 = soundPool.load(descriptor, 0);
+
+            descriptor = assetManager.openFd("sample3.ogg");
+            sample3 = soundPool.load(descriptor, 0);
+
+            descriptor = assetManager.openFd("sample4.ogg");
+            sample4 = soundPool.load(descriptor, 0);
+        } catch (IOException e) {
+            // Catch exceptions
+        }
     }
 }
