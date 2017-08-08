@@ -87,5 +87,26 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             // Catch exceptions
         }
+
+        // Get screen size in pixels
+        display = getWindowManager().getDefaultDisplay();
+        size = new Point();
+        display.getSize(size);
+        screenWidth = size.x;
+        screenHeight = size.y;
+
+        // Set size of game objects
+        racketPosition = new Point();
+        racketPosition.x = screenWidth / 2;
+        racketPosition.y = screenHeight - 20;
+        racketWidth = screenWidth / 8;
+        racketHeight = 10;
+
+        ballWidth = screenWidth / 35;
+        ballPosition = new Point();
+        ballPosition.x = screenWidth / 2;
+        ballPosition.y = 1 + ballWidth;
+
+        lives = 3;
     }
 }
