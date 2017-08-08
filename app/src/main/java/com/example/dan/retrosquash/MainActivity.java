@@ -1,8 +1,10 @@
 package com.example.dan.retrosquash;
 
+import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Point;
 import android.media.AudioManager;
 import android.media.SoundPool;
@@ -10,8 +12,11 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
 import android.view.Display;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 
 import java.io.IOException;
+import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -108,5 +113,46 @@ public class MainActivity extends AppCompatActivity {
         ballPosition.y = 1 + ballWidth;
 
         lives = 3;
+    }
+
+    class SquashCourtView extends SurfaceView implements Runnable {
+        Thread ourThread = null;
+        SurfaceHolder ourHolder;
+        volatile boolean playingSquash;
+        Paint paint;
+
+        public SquashCourtView(Context context) {
+            super(context);
+            ourHolder = getHolder();
+            paint = new Paint();
+            ballIsMovingDown = true;
+
+            // Send the ball in random direction
+            Random randomNumber = new Random();
+            int ballDirection = randomNumber.nextInt(3);
+            switch (ballDirection) {
+                case 0:
+                    ballIsMovingLeft = true;
+                    ballIsMovingRight = false;
+                    break;
+                case 1:
+                    ballIsMovingRight = true;
+                    ballIsMovingLeft = false;
+                    break;
+                case 2:
+                    ballIsMovingLeft = false;
+                    ballIsMovingRight = false;
+                    break;
+            }
+        }
+
+        @Override
+        public void run() {
+            while (playingSquash) {
+                updateCourt();
+                drawCourt();
+                controlFPS();
+            }
+        }
     }
 }
