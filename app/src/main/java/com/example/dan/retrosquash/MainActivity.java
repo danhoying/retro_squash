@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
 import android.view.Display;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -326,5 +327,36 @@ public class MainActivity extends AppCompatActivity {
             }
             return true;
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        while (true) {
+            squashCourtView.pause();
+            break;
+        }
+        finish();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        squashCourtView.pause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        squashCourtView.resume();
+    }
+
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            squashCourtView.pause();
+            finish();
+            return true;
+        }
+        return false;
     }
 }
