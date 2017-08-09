@@ -66,7 +66,6 @@ public class MainActivity extends AppCompatActivity {
     int score;
     int lives;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -106,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
         // Set size of game objects
         racketPosition = new Point();
         racketPosition.x = screenWidth / 2;
-        racketPosition.y = screenHeight - 20;
+        racketPosition.y = screenHeight - 200;
         racketWidth = screenWidth / 8;
         racketHeight = 10;
 
@@ -127,7 +126,6 @@ public class MainActivity extends AppCompatActivity {
         public SquashCourtView(Context context) {
             super(context);
             ourHolder = getHolder();
-            paint = new Paint();
             ballIsMovingDown = true;
 
             // Send the ball in random direction
@@ -236,7 +234,7 @@ public class MainActivity extends AppCompatActivity {
             if (ballPosition.y + ballWidth >= (racketPosition.y - racketHeight / 2)) {
                 int halfRacket = racketWidth / 2;
                 if (ballPosition.x + ballWidth > (racketPosition.x - halfRacket) &&
-                ballPosition.x - ballWidth < (racketPosition.x + halfRacket)) {
+                        ballPosition.x - ballWidth < (racketPosition.x + halfRacket)) {
                     // Rebound ball vertically and play a sound
                     soundPool.play(sample3, 1, 1, 0, 0, 1);
                     score++;
@@ -257,7 +255,7 @@ public class MainActivity extends AppCompatActivity {
         public void drawCourt() {
             if (ourHolder.getSurface().isValid()) {
                 canvas = ourHolder.lockCanvas();
-                Paint paint = new Paint();
+                paint = new Paint();
                 canvas.drawColor(Color.BLACK); // Background color
                 paint.setColor(Color.argb(255, 255, 255, 255));
                 paint.setTextSize(45);
@@ -265,13 +263,12 @@ public class MainActivity extends AppCompatActivity {
 
                 // Draw the squash racket
                 canvas.drawRect(racketPosition.x - (racketWidth / 2),
-                        racketPosition.y - (racketHeight / 2),
-                        racketPosition.x + (racketWidth / 2),
-                        racketPosition.y + racketHeight,  paint);
+                        racketPosition.y - (racketHeight / 2), racketPosition.x + (racketWidth / 2),
+                        racketPosition.y + racketHeight, paint);
 
                 // Draw the ball
                 canvas.drawRect(ballPosition.x, ballPosition.y,
-                        ballPosition.x + ballWidth, ballPosition.y + ballWidth,  paint);
+                        ballPosition.x + ballWidth, ballPosition.y + ballWidth, paint);
 
                 ourHolder.unlockCanvasAndPost(canvas);
             }
@@ -304,12 +301,12 @@ public class MainActivity extends AppCompatActivity {
 
         public void resume() {
             playingSquash = true;
-            ourThread  = new Thread(this);
+            ourThread = new Thread(this);
             ourThread.start();
         }
 
         @Override
-        public boolean onTouchEvent (MotionEvent motionEvent) {
+        public boolean onTouchEvent(MotionEvent motionEvent) {
             switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
                 case MotionEvent.ACTION_DOWN:
                     if (motionEvent.getX() >= screenWidth / 2) {
