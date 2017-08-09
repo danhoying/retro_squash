@@ -154,5 +154,101 @@ public class MainActivity extends AppCompatActivity {
                 controlFPS();
             }
         }
+
+        public void updateCourt() {
+            if (racketIsMovingRight) {
+                racketPosition.x = racketPosition.x + 10;
+            }
+            if (racketIsMovingLeft) {
+                racketPosition.x = racketPosition.x - 10;
+            }
+            // Detect collisions
+            // Hit right of screen
+            if (ballPosition.x + ballWidth > screenWidth) {
+                ballIsMovingLeft = true;
+                ballIsMovingRight = false;
+                soundPool.play(sample1, 1, 1, 0, 0, 1);
+            }
+
+            // Hit left of screen
+            if (ballPosition.x < 0) {
+                ballIsMovingLeft = false;
+                ballIsMovingRight = true;
+                soundPool.play(sample1, 1, 1, 0, 0, 1);
+            }
+
+            // Edge of ball has hit bottom of screen
+            if (ballPosition.y > screenHeight - ballWidth) {
+                lives = lives - 1;
+                if (lives == 0) {
+                    lives = 3;
+                    score = 0;
+                    soundPool.play(sample4, 1, 1, 0, 0, 1);
+                }
+                ballPosition.y = 1 + ballWidth; // Back to top of screen
+
+                // Set horizontal direction for next falling ball
+                Random randomNumber = new Random();
+                int startX = randomNumber.nextInt(screenWidth - ballWidth) + 1;
+                ballPosition.x = startX + ballWidth;
+                int ballDirection = randomNumber.nextInt(3);
+
+                switch (ballDirection) {
+                    case 0:
+                        ballIsMovingLeft = true;
+                        ballIsMovingRight = false;
+                        break;
+                    case 1:
+                        ballIsMovingRight = true;
+                        ballIsMovingLeft = false;
+                        break;
+                    case 2:
+                        ballIsMovingLeft = false;
+                        ballIsMovingRight = false;
+                        break;
+                }
+            }
+            // Ball hits top of screen
+            if (ballPosition.y <= 0) {
+                ballIsMovingDown = true;
+                ballIsMovingUp = false;
+                ballPosition.y = 1;
+                soundPool.play(sample2, 1, 1, 0, 0, 1);
+            }
+            // Adjust x position based on ball moving up or down
+            if (ballIsMovingDown) {
+                ballPosition.y += 6;
+            }
+            if (ballIsMovingUp) {
+                ballPosition.y -= 10;
+            }
+            if (ballIsMovingLeft) {
+                ballPosition.x -= 12;
+            }
+            if (ballIsMovingRight) {
+                ballPosition.x += 12;
+            }
+
+            // Has ball hit racket?
+            if (ballPosition.y + ballWidth >= (racketPosition.y - racketHeight / 2)) {
+                int halfRacket = racketWidth / 2;
+                if (ballPosition.x + ballWidth > (racketPosition.x - halfRacket) &&
+                ballPosition.x - ballWidth < (racketPosition.x + halfRacket)) {
+                    // Rebound ball vertically and play a sound
+                    soundPool.play(sample3, 1, 1, 0, 0, 1);
+                    score++;
+                    ballIsMovingUp = true;
+                    ballIsMovingDown = false;
+                    // Determine how to rebound ball horizontally
+                    if (ballPosition.x > racketPosition.x) {
+                        ballIsMovingRight = true;
+                        ballIsMovingLeft = false;
+                    } else {
+                        ballIsMovingRight = false;
+                        ballIsMovingLeft = true;
+                    }
+                }
+            }
+        }
     }
 }
