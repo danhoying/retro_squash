@@ -158,10 +158,10 @@ public class MainActivity extends AppCompatActivity {
 
         public void updateCourt() {
             if (racketIsMovingRight) {
-                racketPosition.x = racketPosition.x + 10;
+                racketPosition.x = racketPosition.x + 20;
             }
             if (racketIsMovingLeft) {
-                racketPosition.x = racketPosition.x - 10;
+                racketPosition.x = racketPosition.x - 20;
             }
             // Detect collisions
             // Hit right of screen
