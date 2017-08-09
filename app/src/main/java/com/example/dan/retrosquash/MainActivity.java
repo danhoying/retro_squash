@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.media.AudioManager;
@@ -12,6 +13,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
 import android.view.Display;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -249,6 +251,80 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             }
+        }
+
+        public void drawCourt() {
+            if (ourHolder.getSurface().isValid()) {
+                canvas = ourHolder.lockCanvas();
+                Paint paint = new Paint();
+                canvas.drawColor(Color.BLACK); // Background color
+                paint.setColor(Color.argb(255, 255, 255, 255));
+                paint.setTextSize(45);
+                canvas.drawText("Score:" + score + " Lives:" + lives + " fps:" + fps, 20, 40, paint);
+
+                // Draw the squash racket
+                canvas.drawRect(racketPosition.x - (racketWidth / 2),
+                        racketPosition.y - (racketHeight / 2),
+                        racketPosition.x + (racketWidth / 2),
+                        racketPosition.y + racketHeight,  paint);
+
+                // Draw the ball
+                canvas.drawRect(ballPosition.x, ballPosition.y,
+                        ballPosition.x + ballWidth, ballPosition.y + ballWidth,  paint);
+
+                ourHolder.unlockCanvasAndPost(canvas);
+            }
+        }
+
+        public void controlFPS() {
+            long timeThisFrame = (System.currentTimeMillis() - lastFrameTime);
+            long timeToSleep = 15 - timeThisFrame;
+            if (timeThisFrame > 0) {
+                fps = (int) (1000 / timeThisFrame);
+            }
+            if (timeToSleep > 0) {
+                try {
+                    ourThread.sleep(timeToSleep);
+                } catch (InterruptedException e) {
+                    // Catch exceptions
+                }
+            }
+            lastFrameTime = System.currentTimeMillis();
+        }
+
+        public void pause() {
+            playingSquash = false;
+            try {
+                ourThread.join();
+            } catch (InterruptedException e) {
+                // Catch exceptions
+            }
+        }
+
+        public void resume() {
+            playingSquash = true;
+            ourThread  = new Thread(this);
+            ourThread.start();
+        }
+
+        @Override
+        public boolean onTouchEvent (MotionEvent motionEvent) {
+            switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
+                case MotionEvent.ACTION_DOWN:
+                    if (motionEvent.getX() >= screenWidth / 2) {
+                        racketIsMovingRight = true;
+                        racketIsMovingLeft = false;
+                    } else {
+                        racketIsMovingLeft = true;
+                        racketIsMovingRight = false;
+                    }
+                    break;
+                case MotionEvent.ACTION_UP:
+                    racketIsMovingRight = false;
+                    racketIsMovingLeft = false;
+                    break;
+            }
+            return true;
         }
     }
 }
