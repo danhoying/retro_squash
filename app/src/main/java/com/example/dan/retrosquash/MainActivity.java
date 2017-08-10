@@ -34,7 +34,6 @@ public class MainActivity extends AppCompatActivity {
 
     Canvas canvas;
     SquashCourtView squashCourtView;
-    Block block;
 
     // Sound variables
     private SoundPool soundPool;
@@ -55,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
     Point racketPosition;
     int ballWidth;
     Point ballPosition;
+    Block block;
 
     // For ball and racket movement
     boolean ballIsMovingLeft;
@@ -122,6 +122,8 @@ public class MainActivity extends AppCompatActivity {
         block.position = new Point();
         block.position.x = (block.width / 2);
         block.position.y = (block.height / 2) + 100; // Move block down so it doesn't overlap stats
+        List<Block> blockList = block.createBlockArray(block);
+        block.drawBlocks(blockList);
 
         lives = 3;
     }
@@ -136,7 +138,6 @@ public class MainActivity extends AppCompatActivity {
             super(context);
             ourHolder = getHolder();
             ballIsMovingDown = true;
-
 
             // Send the ball in random direction
             Random randomNumber = new Random();
@@ -279,18 +280,6 @@ public class MainActivity extends AppCompatActivity {
                 paint.setTextSize(45);
                 canvas.drawText("Score:" + score + " Lives:" + lives + " fps:" + fps, 20, 40, paint);
 
-                // Draw the blocks
-                List<Block> blockList = block.createBlockArray(block);
-                for (int i = 1; i < blockList.size(); i++) {
-                    canvas.drawRect(block.position.x - (block.position.x / 2),
-                            block.position.y - (block.position.y / 2),
-                            block.position.x + (block.position.x / 2),
-                            block.position.y + block.position.y, paint);
-                    Log.i("Size", "drawCourt: " + block.position.x);
-                    block.position.x += block.getWidth();
-                    Log.i("Size", "drawCourt: " + block.position.x);
-                }
-
                 // Draw the squash racket
                 canvas.drawRect(racketPosition.x - (racketWidth / 2),
                         racketPosition.y - (racketHeight / 2), racketPosition.x + (racketWidth / 2),
@@ -373,18 +362,33 @@ public class MainActivity extends AppCompatActivity {
         public Block(int width, int height) {
             this.width = width;
             this.height = height;
-
         }
 
         public List<Block> createBlockArray(Block block) {
             int numBlocksAcross = 8;
             int numBlocksDown = 4;
             int total = numBlocksAcross * numBlocksDown;
-            List<Block> blockList = new ArrayList<Block>();
+
+            List<Block> blockList = new ArrayList<>();
             for (int i = 0; i < total; i++) {
                 blockList.add(block);
+                block.position.x += block.getWidth();
             }
             return blockList;
+        }
+
+        public void drawBlocks(List<Block> blockList) {
+            Paint paint = new Paint();
+            Canvas canvas = new Canvas();
+
+            for (int i = 1; i < blockList.size(); i++) {
+                canvas.drawRect(block.position.x - (block.position.x / 2),
+                        block.position.y - (block.position.y / 2),
+                        block.position.x + (block.position.x / 2),
+                        block.position.y + block.position.y, paint);
+                Log.i("Size", "drawCourt: " + block.position.x);
+                Log.i("Size", "drawCourt: " + i);
+            }
         }
 
     }
