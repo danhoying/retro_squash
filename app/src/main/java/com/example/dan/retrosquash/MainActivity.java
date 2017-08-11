@@ -371,8 +371,10 @@ public class MainActivity extends AppCompatActivity {
 
             List<Block> blockList = new ArrayList<>();
             for (int i = 0; i < total; i++) {
-                blockList.add(block);
-                block.position.x += block.getWidth();
+                blockList.add(new Block(screenWidth / 4, screenHeight / 32));
+                block.position = new Point();
+                block.position.x = (block.width / 2);
+                block.position.y = (block.height / 2) + 100;
             }
             return blockList;
         }
@@ -380,8 +382,12 @@ public class MainActivity extends AppCompatActivity {
         public void drawBlocks(List<Block> blockList) {
             Paint paint = new Paint();
             Canvas canvas = new Canvas();
+            paint.setColor(Color.argb(255, 255, 255, 255));
 
-            for (int i = 1; i < blockList.size(); i++) {
+            for (int i = 0; i < blockList.size() - 1; i++) {
+                block = blockList.get(i);
+
+
                 canvas.drawRect(block.position.x - (block.position.x / 2),
                         block.position.y - (block.position.y / 2),
                         block.position.x + (block.position.x / 2),
