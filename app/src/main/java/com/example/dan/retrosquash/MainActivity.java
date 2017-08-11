@@ -21,7 +21,6 @@ import android.view.SurfaceView;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
@@ -31,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
         AppCompatDelegate.setDefaultNightMode(
                 AppCompatDelegate.MODE_NIGHT_YES);
     }
+
+    private static final String TAG = "MainActivity";
 
     Canvas canvas;
     SquashCourtView squashCourtView;
@@ -54,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
     Point racketPosition;
     int ballWidth;
     Point ballPosition;
-    Block block;
+    Point blockPosition;
 
     // For ball and racket movement
     boolean ballIsMovingLeft;
@@ -118,14 +119,21 @@ public class MainActivity extends AppCompatActivity {
         ballPosition.x = screenWidth / 2;
         ballPosition.y = 1 + ballWidth;
 
-        block = new Block(screenWidth / 4, screenHeight / 32);
-        block.position = new Point();
-        block.position.x = (block.width / 2);
-        block.position.y = (block.height / 2) + 100; // Move block down so it doesn't overlap stats
-        List<Block> blockList = block.createBlockArray(block);
-        block.drawBlocks(blockList);
-
         lives = 3;
+
+        Block.setNumBlocks(32);
+        int blockWidth = screenWidth / 8;
+        int blockHeight = screenHeight / 16;
+        blockPosition = new Point(blockWidth / 2, (blockHeight / 2) + 100);
+
+        Block.blockList = new ArrayList<>();
+        Block.setBlockList(Block.blockList, Block.getNumBlocks(),
+                blockWidth, blockHeight, blockPosition);
+
+        Block block = Block.getBlockList().get(0);
+        Block block2 = Block.getBlockList().get(1);
+        Log.i(TAG, "onCreate: " + block.position);
+        Log.i(TAG, "onCreate: " + block2.position);
     }
 
     class SquashCourtView extends SurfaceView implements Runnable {
@@ -343,60 +351,6 @@ public class MainActivity extends AppCompatActivity {
             }
             return true;
         }
-    }
-
-    // Methods and variables for the breakable blocks
-    class Block {
-        int width;
-        int height;
-        Point position;
-
-        public int getWidth() {
-            return width;
-        }
-
-        public int getHeight() {
-            return height;
-        }
-
-        public Block(int width, int height) {
-            this.width = width;
-            this.height = height;
-        }
-
-        public List<Block> createBlockArray(Block block) {
-            int numBlocksAcross = 8;
-            int numBlocksDown = 4;
-            int total = numBlocksAcross * numBlocksDown;
-
-            List<Block> blockList = new ArrayList<>();
-            for (int i = 0; i < total; i++) {
-                blockList.add(new Block(screenWidth / 4, screenHeight / 32));
-                block.position = new Point();
-                block.position.x = (block.width / 2);
-                block.position.y = (block.height / 2) + 100;
-            }
-            return blockList;
-        }
-
-        public void drawBlocks(List<Block> blockList) {
-            Paint paint = new Paint();
-            Canvas canvas = new Canvas();
-            paint.setColor(Color.argb(255, 255, 255, 255));
-
-            for (int i = 0; i < blockList.size() - 1; i++) {
-                block = blockList.get(i);
-
-
-                canvas.drawRect(block.position.x - (block.position.x / 2),
-                        block.position.y - (block.position.y / 2),
-                        block.position.x + (block.position.x / 2),
-                        block.position.y + block.position.y, paint);
-                Log.i("Size", "drawCourt: " + block.position.x);
-                Log.i("Size", "drawCourt: " + i);
-            }
-        }
-
     }
 
     @Override
